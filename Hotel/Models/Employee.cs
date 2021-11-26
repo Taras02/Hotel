@@ -13,5 +13,6 @@ namespace Hotel.Models
         public string LastName { get; set; }
         public string Postion { get; set; }
         public float Salary { get; set; }
+        public virtual ICollection<OrderService> OrderServices { get; set; }
     }
 }

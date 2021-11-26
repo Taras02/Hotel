@@ -24,6 +24,9 @@ namespace Hotel
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderService> OrderServices { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
+
+        public object InsuredEvents { get; internal set; }
+ 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>(CustomerConfigure);

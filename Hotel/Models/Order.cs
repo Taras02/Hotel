@@ -16,5 +16,6 @@ namespace Hotel.Models
         public float Sum { get; set; }
         public string Status { get; set; }
         public virtual ICollection<OrderService> OrderServices { get; set; }
+        public virtual Booking Booking { get; set; }
     }
 }

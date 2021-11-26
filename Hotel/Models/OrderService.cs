@@ -15,7 +15,8 @@ namespace Hotel.Models
 
         public float Cost { get; set; }
         public DateTime Date { get; set; }
-    
-        public virtual ICollection<Employee> Employees { get; set; } 
+
+        public virtual Order Order { get; set; }
+        public virtual Employee Employee { get; set; }
     }
 }

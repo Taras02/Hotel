@@ -13,5 +13,7 @@ namespace Hotel.Models
         public string Description { get; set; }
         public float Cost { get; set; }
         public string Status { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual RoomType RoomType { get; set; }
     }
 }

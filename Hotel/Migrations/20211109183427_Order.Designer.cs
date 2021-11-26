@@ -4,14 +4,16 @@ using Hotel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Hotel.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    partial class HotelContextModelSnapshot : ModelSnapshot
+    [Migration("20211109183427_Order")]
+    partial class Order
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +37,7 @@ namespace Hotel.Migrations
                     b.Property<int>("CodeOrder")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoomID")
@@ -47,8 +49,6 @@ namespace Hotel.Migrations
                     b.HasKey("BookingId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("RoomID");
 
                     b.ToTable("Bookings");
                 });
@@ -93,6 +93,9 @@ namespace Hotel.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<int?>("OrderServiceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Postion")
                         .HasColumnType("nvarchar(max)");
 
@@ -100,6 +103,8 @@ namespace Hotel.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("EmployeeId");
+
+                    b.HasIndex("OrderServiceId");
 
                     b.ToTable("Employees");
                 });
@@ -128,9 +133,6 @@ namespace Hotel.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("BookingId")
-                        .IsUnique();
-
                     b.ToTable("Orders");
                 });
 
@@ -147,20 +149,10 @@ namespace Hotel.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("NameOrderService")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.HasKey("OrderServiceId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderServices");
                 });
@@ -171,6 +163,9 @@ namespace Hotel.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
 
                     b.Property<float>("Cost")
                         .HasColumnType("real");
@@ -188,6 +183,8 @@ namespace Hotel.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RoomId");
+
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("RoomTypeId");
 
@@ -209,63 +206,64 @@ namespace Hotel.Migrations
                     b.ToTable("RoomTypes");
                 });
 
+            modelBuilder.Entity("OrderOrderService", b =>
+                {
+                    b.Property<int>("OrderServicesOrderServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersOrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderServicesOrderServiceId", "OrdersOrderId");
+
+                    b.HasIndex("OrdersOrderId");
+
+                    b.ToTable("OrderOrderService");
+                });
+
             modelBuilder.Entity("Hotel.Models.Booking", b =>
                 {
-                    b.HasOne("Hotel.Models.Customer", "Customer")
+                    b.HasOne("Hotel.Models.Customer", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hotel.Models.Room", "Room")
-                        .WithMany("Bookings")
-                        .HasForeignKey("RoomID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Room");
+                        .HasForeignKey("CustomerId");
                 });
 
-            modelBuilder.Entity("Hotel.Models.Order", b =>
+            modelBuilder.Entity("Hotel.Models.Employee", b =>
                 {
-                    b.HasOne("Hotel.Models.Booking", "Booking")
-                        .WithOne("Order")
-                        .HasForeignKey("Hotel.Models.Order", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("Hotel.Models.OrderService", b =>
-                {
-                    b.HasOne("Hotel.Models.Employee", "Employee")
-                        .WithMany("OrderServices")
-                        .HasForeignKey("EmployeeId");
-
-                    b.HasOne("Hotel.Models.Order", "Order")
-                        .WithMany("OrderServices")
-                        .HasForeignKey("OrderId");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Order");
+                    b.HasOne("Hotel.Models.OrderService", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("OrderServiceId");
                 });
 
             modelBuilder.Entity("Hotel.Models.Room", b =>
                 {
-                    b.HasOne("Hotel.Models.RoomType", "RoomType")
+                    b.HasOne("Hotel.Models.Booking", null)
+                        .WithMany("Rooms")
+                        .HasForeignKey("BookingId");
+
+                    b.HasOne("Hotel.Models.RoomType", null)
                         .WithMany("Rooms")
                         .HasForeignKey("RoomTypeId");
+                });
 
-                    b.Navigation("RoomType");
+            modelBuilder.Entity("OrderOrderService", b =>
+                {
+                    b.HasOne("Hotel.Models.OrderService", null)
+                        .WithMany()
+                        .HasForeignKey("OrderServicesOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Hotel.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Hotel.Models.Booking", b =>
                 {
-                    b.Navigation("Order");
+                    b.Navigation("Rooms");
                 });
 
             modelBuilder.Entity("Hotel.Models.Customer", b =>
@@ -273,19 +271,9 @@ namespace Hotel.Migrations
                     b.Navigation("Bookings");
                 });
 
-            modelBuilder.Entity("Hotel.Models.Employee", b =>
+            modelBuilder.Entity("Hotel.Models.OrderService", b =>
                 {
-                    b.Navigation("OrderServices");
-                });
-
-            modelBuilder.Entity("Hotel.Models.Order", b =>
-                {
-                    b.Navigation("OrderServices");
-                });
-
-            modelBuilder.Entity("Hotel.Models.Room", b =>
-                {
-                    b.Navigation("Bookings");
+                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("Hotel.Models.RoomType", b =>

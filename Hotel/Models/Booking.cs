@@ -10,7 +10,7 @@ namespace Hotel.Models
     {
 
         public int BookingId { get; set; }
-        //public int CustomerID { get; set; }
+        public int CustomerId { get; set; }
         
         public int RoomID { get; set;  }
         public int CodeOrder { get; set; }
@@ -18,7 +18,9 @@ namespace Hotel.Models
         public DateTime Checkout { get; set; }
         public string Status { get; set; }
         //public DateTime DateBooking { get; set; }
-        public virtual ICollection <Room> Rooms { get; set; }
-
+        public virtual Room Room { get; set; }
+        public virtual Customer Customer { get; set; }
+        public virtual Order Order { get; set; }
+        // public object CustomerId { get; set; }
     }
 }
